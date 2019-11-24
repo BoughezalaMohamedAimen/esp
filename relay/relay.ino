@@ -12,11 +12,11 @@
 
 
 
-byte relON[] = {0xA0, 0x01, 0x01, 0xA2};  //Hex command to send to serial for open relay
-byte relOFF[] = {0xA0, 0x01, 0x00, 0xA1}; //Hex command to send to serial for close relay
-
-byte rel2ON[] = {0xA0, 0x02, 0x01, 0xA3};  //Hex command to send to serial for open relay
-byte rel2OFF[] = {0xA0, 0x02, 0x00, 0xA2}; //Hex command to send to serial for close relay
+// byte relON[] = {0xA0, 0x01, 0x01, 0xA2};  //Hex command to send to serial for open relay
+// byte relOFF[] = {0xA0, 0x01, 0x00, 0xA1}; //Hex command to send to serial for close relay
+//
+// byte rel2ON[] = {0xA0, 0x02, 0x01, 0xA3};  //Hex command to send to serial for open relay
+// byte rel2OFF[] = {0xA0, 0x02, 0x00, 0xA2}; //Hex command to send to serial for close relay
 
 //---------------------------------------------------------------
 //Our HTML webpage contents in program memory
@@ -39,7 +39,7 @@ const char * MAIN_page= "<!DOCTYPE html>"
 "animation: gradientBG 15s ease infinite;"
 "}"
 "@keyframes gradientBG {"
-"	0% {background-position: 0% 50%;}50% {background-position: 100% 50%;}100% {background-position: 0% 50%;}}"
+"  0% {background-position: 0% 50%;}50% {background-position: 100% 50%;}100% {background-position: 0% 50%;}}"
 ".center-fixed { position: fixed !important;}"
 ".center {"
   "position: absolute;"
@@ -55,18 +55,18 @@ const char * MAIN_page= "<!DOCTYPE html>"
 ".button--moema::before {content: '';position: absolute;top: -20px;left: -20px;bottom: -20px;right: -20px;background: inherit;"
 "border-radius: 50px;z-index: -1;opacity: 0.4;-webkit-transform: scale3d(0.8, 0.5, 1);transform: scale3d(0.8, 0.5, 1);}"
 ".button--moema:hover {-webkit-transition: background-color 0.1s 0.3s, color 0.1s 0.3s;"
-"	transition: background-color 0.1s 0.3s, color 0.1s 0.3s;color: #ECEFF1;background-color: #3f51b5;-webkit-animation: anim-moema-1 0.3s forwards;animation: anim-moema-1 0.3s forwards;}"
+" transition: background-color 0.1s 0.3s, color 0.1s 0.3s;color: #ECEFF1;background-color: #3f51b5;-webkit-animation: anim-moema-1 0.3s forwards;animation: anim-moema-1 0.3s forwards;}"
 ".button--moema.button--inverted:hover {color: #fff;background-color: transparent;}"
 ".button--moema:hover::before {-webkit-animation: anim-moema-2 0.3s 0.3s forwards;animation: anim-moema-2 0.3s 0.3s forwards;}"
 "@-webkit-keyframes anim-moema-1 {60% {-webkit-transform: scale3d(0.8, 0.8, 1);transform: scale3d(0.8, 0.8, 1);}85% {-webkit-transform: scale3d(1.1, 1.1, 1);transform: scale3d(1.1, 1.1, 1);}100% {-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
 "@keyframes anim-moema-1 {60% {-webkit-transform: scale3d(0.8, 0.8, 1);transform: scale3d(0.8, 0.8, 1);}"
-"	85% {-webkit-transform: scale3d(1.1, 1.1, 1);transform: scale3d(1.1, 1.1, 1);}100% {-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
+" 85% {-webkit-transform: scale3d(1.1, 1.1, 1);transform: scale3d(1.1, 1.1, 1);}100% {-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
 "@-webkit-keyframes anim-moema-2 {to {opacity: 0;-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
-"@keyframes anim-moema-2 {	to {opacity: 0;-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
+"@keyframes anim-moema-2 {  to {opacity: 0;-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
 "a{color:inherit !important;text-decoration: none !important;}"
 "</style>"
 "<div class='center center-fixed'>"
-"<button  class='button button--moema button--inverted button--text-thick button--size-s'><a href='http://192.168.1.30/open'>Ouvrir Porte</a></button>"
+"<button  class='button button--moema button--inverted button--text-thick button--size-s'><a href='http://192.168.1.35/open'>Ouvrir Porte</a></button>"
 "</div>"
 "</body>"
 "</html>";
@@ -74,7 +74,7 @@ const char * MAIN_page= "<!DOCTYPE html>"
 
 
 //Static IP address configuration
-IPAddress staticIP(192, 168, 1, 33); //ESP static ip
+IPAddress staticIP(192, 168, 1, 35); //ESP static ip
 IPAddress gateway(192, 168, 1, 1);   //IP Address of your WiFi Router (Gateway)
 IPAddress subnet(255, 255, 255, 0);  //Subnet mask
 
@@ -87,28 +87,9 @@ const char* deviceName = "porte";
 //SSID and Password of your WiFi router
 const char* ssid = "DJAWEB_BDC44";
 const char* password = "C06D8236B7FCA";
-char allowed[2][12]={"192.168.1.2","192.168.1.7"};
+
 //Declare a global object variable from the ESP8266WebServer class.
 ESP8266WebServer server(80); //Server on port 80
-
-//===============================================================
-// Finding and validating ip adresses
-//===============================================================
-boolean in_allowed(String element)
-{
-  for (int i = 0; i < sizeof(allowed); i++)
-  {
-    Serial.println(allowed[i]);
-    if ((String)allowed[i] == element)
-      return true;
-  }
-    
-
-
-  return false;
-}
-
-
 
 //===============================================================
 // This routine is executed when you open its IP in browser
@@ -119,41 +100,31 @@ void handleRoot() {
 }
 
 void handleOuvrir() {
- String s = "  <br><h1>local</h1>"+server.client().localIP().toString()+"  <br><h1>remote</h1>"+ server.client().remoteIP().toString();
- if(in_allowed(server.client().remoteIP().toString()))
-   s = "  <br><h1>allowed Mac</h1>"+server.client().remoteIP().toString();
-Serial.println("client info:");
-Serial.println(server.client());
-/*Serial.print(server.client().bssid()[1],HEX);
-Serial.print(server.client().bssid()[2],HEX);
-Serial.print(server.client().bssid()[3],HEX);
-Serial.print(server.client().bssid()[4],HEX);
-Serial.print(server.client().bssid()[5],HEX);*/
-// String s = MAIN_page; //Read HTML contents
+ String s = MAIN_page; //Read HTML contents
  server.send(200, "text/html", s); //Send web page
- // Serial.begin(115200);
- // Serial.flush();
- // delay(500);
- // Serial.write(relON, sizeof(relON));
- // delay(1000);
- //
- // //turn the relay off for 3 seconds
- // Serial.write(relOFF, sizeof(relOFF));
- // delay(1000);
- //
- // Serial.end();
+
+digitalWrite(5,LOW);
+ delay(1000);
+digitalWrite(5,HIGH);
+ delay(1000);
+
 
 }
+
 
 
 //==============================================================
 //                  SETUP
 //==============================================================
 void setup(void){
-  Serial.begin(9600);
-  delay(500);
-  Serial.println("restarted:");
-  WiFi.begin(ssid, password);     //Connect to your WiFi router
+  Serial.begin(115200); 
+  pinMode(5,OUTPUT);
+  digitalWrite(5,HIGH);
+  //digitalWrite(5,LOW);
+  WiFi.begin(ssid, password);
+
+  Serial.print("Connecting to ");
+ Serial.print(ssid); Serial.println(" ...");
 
   //Onboard LED port Direction output
 
@@ -164,13 +135,19 @@ void setup(void){
   WiFi.config(staticIP, subnet, gateway);
   WiFi.begin(ssid, password);
 
-  WiFi.mode(WIFI_STA); //WiFi mode station (connect to wifi router only
+
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
   }
-
+  // WiFi.mode(WIFI_STA); //WiFi mode station (connect to wifi router only
+     Serial.print("IP address:\t");
+       Serial.println(WiFi.localIP());
+       Serial.print("gateway:\t");
+       Serial.println(WiFi.gatewayIP().toString());
+       Serial.print("netmask:\t");
+       Serial.println(WiFi.subnetMask().toString());
 
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
   server.on("/open", handleOuvrir); //as Per  <a href="ledOn">, Subroutine to be called
@@ -183,5 +160,5 @@ void setup(void){
 //==============================================================
 void loop(void){
   server.handleClient();//Handle client requests
-  delay(1000);
+  delay(500);
 }

@@ -32,8 +32,8 @@ String matricule="12345-112-16";
 String infotosend="";
 
 //SSID and Password of your WiFi router
-const char* ssid = "DJAWEB_BDC44";
-const char* password = "C06D8236B7FCA";
+const char* ssid = "Aimen";
+const char* password = "roxane1993";
 
 float latitude , longitude;
 
