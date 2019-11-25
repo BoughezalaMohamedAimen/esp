@@ -1,17 +1,61 @@
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <FS.h>
-#include <ArduinoJson.h>
+const char * MAIN_page= "<!DOCTYPE html>"
+"<html lang='fr'>"
+"<head>"
+  "<meta charset='UTF-8'>"
+  "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+"</head>"
+"<body>"
+"<style>"
+"body{"
+"margin: 0;"
+"width: 100%;"
+"height: 100vh;"
+"font-family: 'Exo', sans-serif;"
+"color: #fff;"
+"background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);"
+"background-size: 400% 400%;"
+"animation: gradientBG 15s ease infinite;"
+"}"
+"@keyframes gradientBG {"
+"	0% {background-position: 0% 50%;}50% {background-position: 100% 50%;}100% {background-position: 0% 50%;}}"
+".center-fixed { position: fixed !important;}"
+".center {"
+  "position: absolute;"
+  "left: 50%;"
+  "top: 50%;"
+  "-webkit-transform: translate(-50%,-50%);"
+  "-ms-transform: translate(-50%,-50%);"
+  "transform: translate(-50%,-50%);"
+  "text-align: center;"
+"}"
+".button--moema {padding: 1.5em 3em;border-radius: 50px;background: #7986cb;color: #fff;-webkit-transition: background-color 0.3s, color 0.3s;transition: background-color 0.3s, color 0.3s;}"
+".button--moema.button--inverted {background: transparent;color: #fff;border:1px solid whitesmoke;}"
+".button--moema::before {content: '';position: absolute;top: -20px;left: -20px;bottom: -20px;right: -20px;background: inherit;"
+"border-radius: 50px;z-index: -1;opacity: 0.4;-webkit-transform: scale3d(0.8, 0.5, 1);transform: scale3d(0.8, 0.5, 1);}"
+".button--moema:hover {-webkit-transition: background-color 0.1s 0.3s, color 0.1s 0.3s;"
+"	transition: background-color 0.1s 0.3s, color 0.1s 0.3s;color: #ECEFF1;background-color: #3f51b5;-webkit-animation: anim-moema-1 0.3s forwards;animation: anim-moema-1 0.3s forwards;}"
+".button--moema.button--inverted:hover {color: #fff;background-color: transparent;}"
+".button--moema:hover::before {-webkit-animation: anim-moema-2 0.3s 0.3s forwards;animation: anim-moema-2 0.3s 0.3s forwards;}"
+"@-webkit-keyframes anim-moema-1 {60% {-webkit-transform: scale3d(0.8, 0.8, 1);transform: scale3d(0.8, 0.8, 1);}85% {-webkit-transform: scale3d(1.1, 1.1, 1);transform: scale3d(1.1, 1.1, 1);}100% {-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
+"@keyframes anim-moema-1 {60% {-webkit-transform: scale3d(0.8, 0.8, 1);transform: scale3d(0.8, 0.8, 1);}"
+"	85% {-webkit-transform: scale3d(1.1, 1.1, 1);transform: scale3d(1.1, 1.1, 1);}100% {-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
+"@-webkit-keyframes anim-moema-2 {to {opacity: 0;-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
+"@keyframes anim-moema-2 {	to {opacity: 0;-webkit-transform: scale3d(1, 1, 1);transform: scale3d(1, 1, 1);}}"
+"a{color:inherit !important;text-decoration: none !important;}"
+"</style>"
+"<div class='center center-fixed'>"
+"<button  class='button button--moema button--inverted button--text-thick button--size-s'><a href='http://192.168.1.30/open'>Ouvrir Porte</a></button>"
+"</div>"
+"</body>"
+"</html>";
 
-ESP8266WebServer server;
-uint8_t pin_led = 16;
-char* mySsid = "smart";
 
-IPAddress local_ip(192,168,1,42);
-IPAddress gateway(192,168,1,1);
-IPAddress netmask(255,255,255,0);
 
-char webpage[] PROGMEM = R"=====(
+
+
+
+//------------------------- SETTINGS PAGE --------------------------------------
+char SETTINGS_PAGE[] PROGMEM = R"=====(
   <!DOCTYPE html>
   <html lang='en'>
   <head>
@@ -189,98 +233,3 @@ function myFunction()
 </script>
 </html>
 )=====";
-
-void setup()
-{
-  //pinMode(pin_led, OUTPUT);
-  Serial.begin(115200);
-  SPIFFS.begin();
-
-  wifiConnect();
-
-  server.on("/",[](){server.send_P(200,"text/html", webpage);});
-  server.on("/home",Home);
-  server.on("/settings", HTTP_POST, handleSettingsUpdate);
-
-  server.begin();
-}
-
-void loop()
-{
-  server.handleClient();
-}
-
-void handleSettingsUpdate()
-{
-  String data = server.arg("plain");
-  Serial.println(data);
-  DynamicJsonBuffer jBuffer;
-  JsonObject& jObject = jBuffer.parseObject(data);
-
-  File configFile = SPIFFS.open("/config.json", "w");
-  jObject.printTo(configFile);
-  configFile.close();
-
-  server.send(200, "application/json", "{\"status\" : \"ok\"}");
-  delay(500);
-
-  wifiConnect();
-}
-
-void wifiConnect()
-{
-  //reset networking
-  WiFi.softAPdisconnect(true);
-  WiFi.disconnect();
-  delay(1000);
-  //check for stored credentials
-  if(SPIFFS.exists("/config.json")){
-    const char * _ssid = "", *_pass = "";
-    File configFile = SPIFFS.open("/config.json", "r");
-    if(configFile){
-      size_t size = configFile.size();
-      std::unique_ptr<char[]> buf(new char[size]);
-      configFile.readBytes(buf.get(), size);
-      configFile.close();
-
-      DynamicJsonBuffer jsonBuffer;
-      JsonObject& jObject = jsonBuffer.parseObject(buf.get());
-      if(jObject.success())
-      {
-        _ssid = jObject["ssid"];
-        _pass = jObject["password"];
-        WiFi.mode(WIFI_STA);
-       // WiFi.hostname(deviceName);      // DHCP Hostname (useful for finding device for static lease)
-        WiFi.config(local_ip, gateway, netmask);
-        WiFi.begin(_ssid, _pass);
-        unsigned long startTime = millis();
-        while (WiFi.status() != WL_CONNECTED)
-        {
-          delay(500);
-          Serial.print(".");
-          //digitalWrite(pin_led,!digitalRead(pin_led));
-          if ((unsigned long)(millis() - startTime) >= 5000) break;
-        }
-      }
-    }
-  }
-
-  if (WiFi.status() == WL_CONNECTED)
-  {
-    //digitalWrite(pin_led,HIGH);
-  } else
-  {
-    WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(local_ip, gateway, netmask );
-    WiFi.softAP(mySsid, "123456789");
-    //digitalWrite(pin_led,LOW);
-  }
-  Serial.println("");
-  WiFi.printDiag(Serial);
-}
-
-void Home()
-{
-  Serial.println("Home Page");
-  server.send(200, "text/html", "<h1> Home Page</h1>");
-}
