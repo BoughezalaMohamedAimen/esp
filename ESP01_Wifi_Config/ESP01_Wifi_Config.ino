@@ -2,6 +2,7 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <FS.h>
+#include <EEPROM.h>
 #include <ArduinoJson.h>
 #include "global_variables.h"
 #include "templates.h"
@@ -15,15 +16,15 @@
 void setup(void){
   Serial.begin(115200);
   delay(500);
-  SPIFFS.begin();
-  delay(500);
+  EEPROM.begin(512); //Initialasing EEPROM
+    delay(10);
   wifiConnect();
   delay(500);
-  server.on("/changeSettings",SettingsForm);
+  server.on("/config",SettingsForm);
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
   server.on("/", handleRoot);
   server.on("/open", handleOuvrir);
-  server.begin();  
+  server.begin();
 
 
 }

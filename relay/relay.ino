@@ -12,8 +12,8 @@
 
 
 
-// byte relON[] = {0xA0, 0x01, 0x01, 0xA2};  //Hex command to send to serial for open relay
-// byte relOFF[] = {0xA0, 0x01, 0x00, 0xA1}; //Hex command to send to serial for close relay
+byte relON[] = {0xA0, 0x01, 0x01, 0xA2};  //Hex command to send to serial for open relay
+byte relOFF[] = {0xA0, 0x01, 0x00, 0xA1}; //Hex command to send to serial for close relay
 //
 // byte rel2ON[] = {0xA0, 0x02, 0x01, 0xA3};  //Hex command to send to serial for open relay
 // byte rel2OFF[] = {0xA0, 0x02, 0x00, 0xA2}; //Hex command to send to serial for close relay
@@ -66,7 +66,7 @@ const char * MAIN_page= "<!DOCTYPE html>"
 "a{color:inherit !important;text-decoration: none !important;}"
 "</style>"
 "<div class='center center-fixed'>"
-"<button  class='button button--moema button--inverted button--text-thick button--size-s'><a href='http://192.168.1.35/open'>Ouvrir Porte</a></button>"
+"<button  class='button button--moema button--inverted button--text-thick button--size-s'><a href='http://192.168.1.30/open'>Ouvrir Porte</a></button>"
 "</div>"
 "</body>"
 "</html>";
@@ -74,7 +74,7 @@ const char * MAIN_page= "<!DOCTYPE html>"
 
 
 //Static IP address configuration
-IPAddress staticIP(192, 168, 1, 35); //ESP static ip
+IPAddress staticIP(192, 168, 1, 30); //ESP static ip
 IPAddress gateway(192, 168, 1, 1);   //IP Address of your WiFi Router (Gateway)
 IPAddress subnet(255, 255, 255, 0);  //Subnet mask
 
@@ -103,11 +103,17 @@ void handleOuvrir() {
  String s = MAIN_page; //Read HTML contents
  server.send(200, "text/html", s); //Send web page
 
-digitalWrite(5,LOW);
- delay(1000);
-digitalWrite(5,HIGH);
+  Serial.begin(115200);
+ Serial.flush();
+ delay(500);
+ Serial.write(relON, sizeof(relON));
  delay(1000);
 
+ //turn the relay off for 3 seconds
+ Serial.write(relOFF, sizeof(relOFF));
+ delay(1000);
+
+ Serial.end();
 
 }
 
@@ -117,9 +123,8 @@ digitalWrite(5,HIGH);
 //                  SETUP
 //==============================================================
 void setup(void){
-  Serial.begin(115200); 
-  pinMode(5,OUTPUT);
-  digitalWrite(5,HIGH);
+  
+  
   //digitalWrite(5,LOW);
   WiFi.begin(ssid, password);
 
@@ -142,18 +147,13 @@ void setup(void){
     delay(500);
   }
   // WiFi.mode(WIFI_STA); //WiFi mode station (connect to wifi router only
-     Serial.print("IP address:\t");
-       Serial.println(WiFi.localIP());
-       Serial.print("gateway:\t");
-       Serial.println(WiFi.gatewayIP().toString());
-       Serial.print("netmask:\t");
-       Serial.println(WiFi.subnetMask().toString());
+     
 
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
   server.on("/open", handleOuvrir); //as Per  <a href="ledOn">, Subroutine to be called
 
   server.begin();                  //Start server
-  Serial.println("HTTP server started");
+  
 }
 //==============================================================
 //                     LOOP
