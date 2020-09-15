@@ -25,8 +25,8 @@ void wifiConnect()
         _ssid = jObject["ssid"];
         _pass = jObject["password"];
         WiFi.mode(WIFI_STA);
-        WiFi.hostname(deviceName);      // DHCP Hostname (useful for finding device for static lease)
-        WiFi.config(staticIP,gateway,dns,subnet); 
+       // WiFi.hostname(deviceName);      // DHCP Hostname (useful for finding device for static lease)
+        WiFi.config(staticIP, subnet, gateway);
         WiFi.begin(_ssid, _pass);
         unsigned long startTime = millis();
         while (WiFi.status() != WL_CONNECTED)
@@ -52,16 +52,4 @@ void wifiConnect()
   }
     Serial.println("");
   WiFi.printDiag(Serial);
-}
-
-int DoGet(String url){
-
-   http.begin(client,url); 
-   int httpCode = http.GET();
-      if (httpCode > 0) 
-        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) 
-          request_result = http.getString();
-       
-      http.end();
-      return httpCode;
 }

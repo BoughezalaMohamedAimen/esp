@@ -284,6 +284,9 @@ boolean in_allowed(String element)
 //===============================================================
 void handleRoot() {
  String s = MAIN_page; //Read HTML contents
+ Serial.println("root");
+ Serial.println(server.arg("comm"));
+ rsend.sendNEC(server.arg("comm") , 32);
  server.send(200, "text/html", s); //Send web page
 }
 void changeSettings(){
@@ -332,9 +335,9 @@ void handleSat() {
 //==============================================================
 void setup(void){
   irsend.begin();
-  //Serial.begin(115200);
+  Serial.begin(115200);
   delay(500);
-  //Serial.println("restarted:");
+  Serial.println("restarted:");
   SPIFFS.begin();
 
   wifiConnect();

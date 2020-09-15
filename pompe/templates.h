@@ -1,6 +1,37 @@
 //---------------------------------------------------------------
 //HOME PAGE
-const char * MAIN_page="<h1> Hello from ESP8266</h1>";
+
+char MAIN_page[] PROGMEM = R"=====(
+  <!DOCTYPE html>
+  <html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>POMPE D'EAU</title>
+  </head>
+  <body>
+  <style>
+  body{font-family: Helvetica;}
+  a{text-decoration: none !important;}
+  .center{position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%,-50%);-ms-transform: translate(-50%,-50%);transform: translate(-50%,-50%);width: 100%; text-align:center;}
+  </style>
+
+
+
+
+  <div class='center'>
+    <h1 style='text-align:center;color:indigo'> Pompe d'eau </h1>
+    <a href='/on' style='display: inline-block;padding: 20px 15px;color: #fff;background:#0099cc;'>ACTIVER LA POMPE</a></br>
+
+    <a href='/off' style='display: inline-block;padding: 20px 15px;color: #fff;background:#ff1a1a; margin-top:10px'>DESACTIVER LA POMPE</a>
+  </div>
+
+
+
+  </body>
+  </html>
+)=====";
 //------------------------- SETTINGS PAGE --------------------------------------
 char settingsPage[] PROGMEM = R"=====(
   <!DOCTYPE html>

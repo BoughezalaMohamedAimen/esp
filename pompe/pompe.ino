@@ -12,16 +12,19 @@
 
 
 void setup() {
+  pinMode(relay, OUTPUT);
 
   Serial.begin(115200);
 
   SPIFFS.begin();
 
-  wifiConnect();
+  wifiInit();
 
   server.on("/changeSettings",changeSettings);
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
   server.on("/", handleRoot);
+  server.on("/on", handleOn);
+  server.on("/off", handleOff);
 
 
   server.begin();                  //Start server
@@ -29,11 +32,6 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(" code response :");
-  Serial.println(DoGet("http://google.com"));
-  Serial.println(" result response :");
-  Serial.println(request_result);
-  server.handleClient();//Handle client requests
-  delay(1000);
+  server.handleClient();
 
 }

@@ -5,10 +5,12 @@ IPAddress dns(192, 168, 1, 1);  //Subnet mask
 IPAddress subnet(255, 255, 255, 0);  //Subnet mask
 
 const char* deviceName = "Telecommande";
-char* mySsid = "Moteur Maison"; 
+char* mySsid = "Moteur Maison";
 char* myPass = "123456789";
 
 String request_result;
+
+int relay=D8;
 
 //SSID and Password of your WiFi router
 

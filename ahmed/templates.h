@@ -1,6 +1,7 @@
 //---------------------------------------------------------------
 //HOME PAGE
-const char * MAIN_page="<h1> Hello from ESP8266</h1>";
+const char * MAIN_page="<h1> Hello From ESP8266 By Aimen</h1>";
+
 //------------------------- SETTINGS PAGE --------------------------------------
 char settingsPage[] PROGMEM = R"=====(
   <!DOCTYPE html>

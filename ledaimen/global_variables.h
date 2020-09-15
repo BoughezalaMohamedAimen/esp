@@ -4,8 +4,11 @@ IPAddress gateway(192, 168, 1, 1);   //IP Address of your WiFi Router (Gateway)
 IPAddress dns(192, 168, 1, 1);  //Subnet mask
 IPAddress subnet(255, 255, 255, 0);  //Subnet mask
 
+#define IR_LED 4
+
+IRsend irsend(IR_LED);
 const char* deviceName = "Telecommande";
-char* mySsid = "Moteur Maison"; 
+char* mySsid = "TéleWifi";
 char* myPass = "123456789";
 
 String request_result;
