@@ -4,13 +4,11 @@ IPAddress gateway(192, 168, 1, 1);   //IP Address of your WiFi Router (Gateway)
 IPAddress dns(192, 168, 1, 1);  //Subnet mask
 IPAddress subnet(255, 255, 255, 0);  //Subnet mask
 
-const char* deviceName = "Rideau";
-char* mySsid = "Rideau Aimen";
+const char* deviceName = "Telecommande";
+char* mySsid = "Chambre Aimen";
 char* myPass = "123456789++";
 
 String request_result;
-
-int relay=D8;
 
 //SSID and Password of your WiFi router
 
@@ -21,3 +19,7 @@ ESP8266WebServer server(80); //Server on port 80
 WiFiClient client;
 
 HTTPClient http;
+
+
+int up=D3;
+int down=D4;

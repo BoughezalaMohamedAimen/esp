@@ -2,20 +2,34 @@
 // Server routes
 //===============================================================
 void handleRoot() {
- server.send(200, "text/html",MAIN_page); //Send web page
+ server.send(200, "text/html", MAIN_page); //Send web page
 }
 
 
-void handleOn() {
+void handleUp() {
  server.send(200, "text/html",MAIN_page); //Send web page
- digitalWrite(relay,HIGH);
+ 
+ digitalWrite(down,LOW);
+ delay(1000);
+ digitalWrite(up,HIGH);
+}
+
+void handlePause() {
+ server.send(200, "text/html",MAIN_page); //Send web page
+ digitalWrite(up,LOW);
+ delay(500);
+ digitalWrite(down,LOW);
+}
+
+void handleDown() {
+ 
+ server.send(200, "text/html",MAIN_page); //Send web page
+ digitalWrite(up,LOW);
+ delay(1000);
+ digitalWrite(down,HIGH);
 }
 
 
-void handleOff() {
- server.send(200, "text/html",MAIN_page); //Send web page
- digitalWrite(relay,LOW);
-}
 
 
 
@@ -44,7 +58,7 @@ void handleSettingsUpdate()
   server.send(200, "application/json", "{\"status\" : \"ok\"}");
   delay(500);
 
-  wifiInit();
+  wifiConnect();
 }
 
 
