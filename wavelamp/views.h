@@ -6,25 +6,21 @@ void handleRoot() {
  server.send(200, "text/html", s); //Send web page
 }
 
-void handleUp() {
- digitalWrite(D3,HIGH);
- delay(1000);
- digitalWrite(D2,LOW);
+void handleColor() {
+ is_animation=0;
+ if((server.arg("red")!="")&&(server.arg("green")!="")&&(server.arg("blue")!=""))
+ set_color(atoi(server.arg("red").c_str()),atoi(server.arg("green").c_str()),atoi(server.arg("blue").c_str())); 
  server.send(200, "application/json", "{ \"status\":\"ok\"}");
 }
 
-void handleDown() {
- digitalWrite(D2,HIGH);
- delay(1000);
- digitalWrite(D3,LOW);
+void handleAnimation() {
+  is_animation=1;
+  while(is_animation)
+  animate_one();
  server.send(200, "application/json", "{ \"status\":\"ok\"}");
 }
 
-void handlePause() {
- digitalWrite(D3,HIGH);
- digitalWrite(D2,HIGH);
- server.send(200, "application/json", "{ \"status\":\"ok\"}");
-}
+
 
 void handlescan(){
   String networks= available_networks();
